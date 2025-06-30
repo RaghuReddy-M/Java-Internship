@@ -1,0 +1,146 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Flight {
+    private String flightNumber;
+    private String destination;
+    private int availableSeats;
+    private double ticketPrice;
+
+    public Flight(String flightNumber, String destination, int availableSeats, double ticketPrice) {
+        this.flightNumber = flightNumber;
+        this.destination = destination;
+        this.availableSeats = availableSeats;
+        this.ticketPrice = ticketPrice;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public double getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public boolean bookSeat() {
+        if (availableSeats > 0) {
+            availableSeats--;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Flight{flightNumber='" + flightNumber + "', destination='" + destination + "', availableSeats=" + availableSeats + ", ticketPrice=" + ticketPrice + "}";
+    }
+}
+
+class Passenger {
+    private String name;
+    private String passportNumber;
+
+    public Passenger(String name, String passportNumber) {
+        this.name = name;
+        this.passportNumber = passportNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Passenger{name='" + name + "', passportNumber='" + passportNumber + "'}";
+    }
+}
+
+public class AirlineReservationSystem {
+    private static List<Flight> flights = new ArrayList<>();
+    private static List<Passenger> passengers = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("1. Add Flight");
+            System.out.println("2. View Flights");
+            System.out.println("3. Book Flight");
+            System.out.println("4. View Passengers");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1 -> addFlight();
+                case 2 -> viewFlights();
+                case 3 -> bookFlight();
+                case 4 -> viewPassengers();
+                case 5 -> {
+                    System.out.println("Exiting system...");
+                    System.exit(0);
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void addFlight() {
+        System.out.print("Enter flight number: ");
+        String flightNumber = scanner.nextLine();
+        System.out.print("Enter destination: ");
+        String destination = scanner.nextLine();
+        System.out.print("Enter available seats: ");
+        int seats = scanner.nextInt();
+        System.out.print("Enter ticket price: ");
+        double price = scanner.nextDouble();
+
+        flights.add(new Flight(flightNumber, destination, seats, price));
+        System.out.println("Flight added successfully.");
+    }
+
+    private static void viewFlights() {
+        if (flights.isEmpty()) {
+            System.out.println("No flights available.");
+        } else {
+            flights.forEach(System.out::println);
+        }
+    }
+
+    private static void bookFlight() {
+        System.out.print("Enter flight number to book: ");
+        String flightNumber = scanner.nextLine();
+
+        for (Flight flight : flights) {
+            if (flight.getFlightNumber().equalsIgnoreCase(flightNumber)) {
+                if (flight.bookSeat()) {
+                    System.out.print("Enter passenger name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter passport number: ");
+                    String passportNumber = scanner.nextLine();
+
+                    passengers.add(new Passenger(name, passportNumber));
+                    System.out.println("Seat booked successfully for " + name);
+                } else {
+                    System.out.println("No available seats on this flight.");
+                }
+                return;
+            }
+        }
+        System.out.println("Flight not found.");
+    }
+
+    private static void viewPassengers() {
+        if (passengers.isEmpty()) {
+            System.out.println("No passengers registered.");
+        } else {
+            passengers.forEach(System.out::println);
+        }
+    }
+}
